@@ -7,20 +7,20 @@ use App\Models\Contato;
 
 class ContatoController extends Controller
 {
-    //Model pega os dados do banco e traz
+    //GET
     public function index()
     {
-    $contatos = Contato::all();
-    //Retorna os dados em formato JSON
-    // return response()->json($contatos);
+        //Model pega os dados do banco e traz
+        $contatos = Contato::all();
+        //Retorna os dados em formato JSON
+        // return response()->json($contatos);
 
-    //Envia valores para a view
-    return view('contatos',['contatos' => $contatos]);
+        //Envia valores para a view
+        return view('contatos',['contatos' => $contatos]);
 
     }
 
     //POST
-
     public function form(Request $request)
     {
         $contato = new Contato();
