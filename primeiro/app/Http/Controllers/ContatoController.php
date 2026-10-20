@@ -7,18 +7,48 @@ use App\Models\Contato;
 
 class ContatoController extends Controller
 {
-    //GET
-    public function index()
+    // //GET
+    // public function index()
+    // {
+    //     //Model pega os dados do banco e traz
+    //     $contatos = Contato::all();
+    //     //Retorna os dados em formato JSON
+    //     // return response()->json($contatos);
+
+    //     //Envia valores para a view
+    //     return view('contatos',['contatos' => $contatos]);
+
+    // }
+
+    /**
+     * GET - Lista e pesquisa contatos por nome.
+     */
+    public function index(Request $request)
     {
-        //Model pega os dados do banco e traz
-        $contatos = Contato::all();
-        //Retorna os dados em formato JSON
-        // return response()->json($contatos);
+        // Captura o texto digitado no campo de pesquisa
+        $busca = $request->input('busca');
 
-        //Envia valores para a view
-        return view('contatos',['contatos' => $contatos]);
+        // Inicia a consulta no banco de dados
+        $query = Contato::query();
 
+        // Verifica se o usuário digitou alguma coisa
+        if (!empty($busca)) {
+
+            // Pesquisa nomes que contenham o texto digitado
+            $query->where('nome', 'LIKE', '%' . $busca . '%');
+        }
+
+        // Executa a consulta e ordena pelo nome
+        $contatos = $query->orderBy('nome', 'asc')->get();
+
+        // Envia os contatos e o texto pesquisado para a view
+        return view('contatos', [
+            'contatos' => $contatos,
+            'busca' => $busca
+        ]);
     }
+
+
 
     //POST
 
@@ -137,6 +167,7 @@ class ContatoController extends Controller
             'Contato não encontrado!'
         );
     }
+
 
 }
 

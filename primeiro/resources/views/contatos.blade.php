@@ -261,9 +261,6 @@
 
             </div>
 
-
-
-
             {{-- faixa de cima --}}
             <div class="mb-4">
                 <h2 class="page-title">Gerenciamento de Contatos</h2>
@@ -363,6 +360,42 @@
                     </span>
                 </div>
 
+                <!-- Formulário de pesquisa de contatos -->
+                <div class="px-4 pt-4 pb-3">
+
+                    <!-- GET: envia a pesquisa pela URL -->
+                    <form action="{{ url('/') }}" method="GET">
+
+                        <div class="input-group">
+
+                            <!-- Campo de pesquisa -->
+                            <input type="text"
+                                name="busca"
+                                class="form-control"
+                                placeholder="Pesquisar contato pelo nome..."
+                                value="{{ request('busca') }}">
+
+                            <!-- Botão Pesquisar -->
+                            <button type="submit"
+                                    class="btn btn-success">
+
+                                <i class="bi bi-search me-1"></i>
+                                Pesquisar
+                            </button>
+
+                            <!-- Botão Limpar -->
+                            <a href="{{ url('/') }}"
+                            class="btn btn-outline-secondary d-flex align-items-center">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                Limpar
+                            </a>
+
+                        </div>
+
+                    </form>
+                </div>
+
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
@@ -395,6 +428,17 @@
                                     <!-- Botões de ações -->
                         <td>
                             <div class="d-flex justify-content-center gap-2">
+
+                            <!-- Botão que abre a janela de detalhes -->
+                            <button type="submit"
+                                    class="btn btn-info btn-sm text-white"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalhes{{ $c->id }}">
+
+                                <i class="bi bi-eye me-1"></i>
+                                Ver Detalhes
+
+                            </button>
 
                             <!-- Botão que abre a janela de edição -->
                             <button type="button"
@@ -430,7 +474,16 @@
                                 @empty
                                 <tr>
                                     <td colspan="5" class="text-center text-muted py-4">
-                                        Nenhum contato cadastrado.
+
+                                        <i class="bi bi-search fs-4 d-block mb-2"></i>
+
+                                        @if(request('busca'))
+                                            Nenhum contato encontrado para
+                                            <strong>{{ request('busca') }}</strong>.
+                                        @else
+                                            Nenhum contato cadastrado.
+                                        @endif
+
                                     </td>
                                 </tr>
                                 @endforelse
@@ -571,35 +624,157 @@
 
             @endforeach
 
+            <!-- Abre janela de detalhes para cada contato -->
+            @foreach ($contatos as $c)
+
+            <div class="modal fade"
+                id="modalDetalhes{{ $c->id }}"
+                tabindex="-1"
+                aria-labelledby="tituloDetalhes{{ $c->id }}"
+                aria-hidden="true">
+
+                <div class="modal-dialog modal-dialog-centered">
+
+                    <div class="modal-content modal-edicao">
+
+                        <!-- Cabeçalho -->
+                        <div class="modal-header">
+
+                            <h5 class="modal-title"
+                                id="tituloDetalhes{{ $c->id }}">
+
+                                <i class="bi bi-eye text-success me-2"></i>
+                                Detalhes do Contato
+
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Fechar">
+                            </button>
+
+                        </div>
+
+                        <!-- Informações do contato -->
+                        <div class="modal-body">
+
+                            <!-- Nome -->
+                            <div class="mb-4">
+
+                                <label class="form-label text-muted">
+                                    <i class="bi bi-person text-success me-2"></i>
+                                    Nome completo
+                                </label>
+
+                                <div class="fw-semibold">
+                                    {{ $c->nome }}
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- Telefone -->
+                            <div class="mb-4">
+
+                                <label class="form-label text-muted">
+                                    <i class="bi bi-telephone text-success me-2"></i>
+                                    Telefone
+                                </label>
+
+                                <div>
+                                    {{ $c->telefone }}
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- E-mail -->
+                            <div class="mb-4">
+
+                                <label class="form-label text-muted">
+                                    <i class="bi bi-envelope text-success me-2"></i>
+                                    E-mail
+                                </label>
+
+                                <div class="text-break">
+                                    {{ $c->email }}
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- Endereço -->
+                            <div class="mb-3">
+
+                                <label class="form-label text-muted">
+                                    <i class="bi bi-geo-alt text-success me-2"></i>
+                                    Endereço
+                                </label>
+
+                                <div class="text-break">
+                                    {{ $c->endereco }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Rodapé -->
+                        <div class="modal-footer">
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                Fechar
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @endforeach
+
+
     </main>
 
-<!-- JavaScript do Bootstrap 5 -->
-<!-- Responsável por abrir e fechar as janelas modais -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript do Bootstrap 5 -->
+    <!-- Responsável por abrir e fechar as janelas modais -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Inicialização automática das notificações -->
-<script>
-    // Aguarda o carregamento da página
-    document.addEventListener('DOMContentLoaded', function () {
+    <!-- Inicialização automática das notificações -->
+    <script>
+        // Aguarda o carregamento da página
+        document.addEventListener('DOMContentLoaded', function () {
 
-        // Localiza todas as notificações Toast
-        const notificacoes = document.querySelectorAll('.toast');
+            // Localiza todas as notificações Toast
+            const notificacoes = document.querySelectorAll('.toast');
 
-        // Percorre cada notificação encontrada
-        notificacoes.forEach(function (elemento) {
+            // Percorre cada notificação encontrada
+            notificacoes.forEach(function (elemento) {
 
-            // Cria uma instância do Toast do Bootstrap
-            const toast = new bootstrap.Toast(elemento, {
-                autohide: true,
-                delay: 2000
+                // Cria uma instância do Toast do Bootstrap
+                const toast = new bootstrap.Toast(elemento, {
+                    autohide: true,
+                    delay: 2000
+                });
+
+                // Exibe a notificação automaticamente
+                toast.show();
             });
 
-            // Exibe a notificação automaticamente
-            toast.show();
         });
-
-    });
-</script>
+    </script>
 
 
 </body>
