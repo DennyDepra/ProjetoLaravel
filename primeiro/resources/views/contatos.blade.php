@@ -368,28 +368,23 @@
 
                         <div class="input-group">
 
-                            <!-- Campo de pesquisa -->
+                            <!-- Campo de pesquisa em tempo real -->
                             <input type="text"
+                                id="pesquisaContato"
                                 name="busca"
                                 class="form-control"
                                 placeholder="Pesquisar contato pelo nome..."
-                                value="{{ request('busca') }}">
+                                autocomplete="off">
 
-                            <!-- Botão Pesquisar -->
-                            <button type="submit"
-                                    class="btn btn-success">
-
-                                <i class="bi bi-search me-1"></i>
-                                Pesquisar
-                            </button>
-
-                            <!-- Botão Limpar -->
-                            <a href="{{ url('/') }}"
-                            class="btn btn-outline-secondary d-flex align-items-center">
+                            <!-- Limpa a pesquisa sem atualizar a página -->
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    id="limparPesquisa">
 
                                 <i class="bi bi-x-circle me-1"></i>
                                 Limpar
-                            </a>
+
+                            </button>
 
                         </div>
 
@@ -412,7 +407,8 @@
 
                             <tbody>
                                 @forelse ($contatos as $c)
-                                <tr>
+                                <tr class="linha-contato"
+                                    data-nome="{{ $c->nome }}">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <span class="avatar">
@@ -775,6 +771,56 @@
 
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Campo onde o usuário digita a pesquisa
+            const pesquisa = document.getElementById('pesquisaContato');
+
+            // Todas as linhas de contatos da tabela
+            const linhas = document.querySelectorAll('.linha-contato');
+
+            // Botão para limpar a pesquisa
+            const limpar = document.getElementById('limparPesquisa');
+
+            // Executa a pesquisa em tempo real
+            function filtrarContatos() {
+
+                // Obtém o texto digitado
+                const texto = pesquisa.value.toLowerCase().trim();
+
+                // Percorre os contatos cadastrados
+                linhas.forEach(function (linha) {
+
+                    // Obtém o nome do contato
+                    const nome = linha.dataset.nome.toLowerCase();
+
+                    // Verifica se o nome contém o texto pesquisado
+                    const encontrado = nome.includes(texto);
+
+                    // Exibe ou oculta a linha
+                    linha.style.display = encontrado ? '' : 'none';
+
+                });
+            }
+
+            // Executa a função a cada letra digitada
+            pesquisa.addEventListener('input', filtrarContatos);
+
+            // Limpa a pesquisa e mostra todos os contatos
+            limpar.addEventListener('click', function () {
+
+                pesquisa.value = '';
+
+                filtrarContatos();
+
+                pesquisa.focus();
+
+            });
+
+        });
+    </script>
+
 
 
 </body>
